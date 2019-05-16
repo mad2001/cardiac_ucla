@@ -34,7 +34,7 @@ def crop(tensors):
     crop_h_dims = (crop_h / 2, crop_h / 2 + rem_h)
     crop_w_dims = (crop_w / 2, crop_w / 2 + rem_w)
     cropped = Cropping2D(cropping=(crop_h_dims, crop_w_dims))(tensors[1])
-    
+
     return cropped
 
 
@@ -43,7 +43,7 @@ def dice_coef(y_true, y_pred, smooth=0.0):
     axes = (1,2,3)
     intersection = K.sum(y_true * y_pred, axis=axes)
     summation = K.sum(y_true, axis=axes) + K.sum(y_pred, axis=axes)
-    
+
     return K.mean((2.0 * intersection + smooth) / (summation + smooth), axis=0)
 
 
@@ -85,14 +85,14 @@ def fcn_model(input_shape, num_classes, weights=None):
         bias_constraint=None,
         trainable=True,
     )
-    
+
     data = Input(shape=input_shape, dtype='float', name='data')
     mvn0 = Lambda(mvn, name='mvn0')(data)
     pad = ZeroPadding2D(padding=5, name='pad')(mvn0)
 
     conv1 = Conv2D(filters=64, name='conv1', **kwargs)(pad)
     mvn1 = Lambda(mvn, name='mvn1')(conv1)
-    
+
     conv2 = Conv2D(filters=64, name='conv2', **kwargs)(mvn1)
     mvn2 = Lambda(mvn, name='mvn2')(conv2)
 
@@ -101,7 +101,7 @@ def fcn_model(input_shape, num_classes, weights=None):
     pool1 = MaxPooling2D(pool_size=3, strides=2,
                     padding='valid', name='pool1')(mvn3)
 
-    
+
     conv4 = Conv2D(filters=128, name='conv4', **kwargs)(pool1)
     mvn4 = Lambda(mvn, name='mvn4')(conv4)
 
@@ -161,7 +161,7 @@ def fcn_model(input_shape, num_classes, weights=None):
                         name='score_conv11')(mvn11)
     crop1 = Lambda(crop, name='crop1')([upsample1, score_conv11])
     fuse_scores1 = average([crop1, upsample1], name='fuse_scores1')
-    
+
     upsample2 = Conv2DTranspose(filters=num_classes, kernel_size=3,
                         strides=2, activation=None, padding='valid',
                         kernel_initializer='glorot_uniform', use_bias=False,
@@ -172,7 +172,7 @@ def fcn_model(input_shape, num_classes, weights=None):
                         name='score_conv7')(mvn7)
     crop2 = Lambda(crop, name='crop2')([upsample2, score_conv7])
     fuse_scores2 = average([crop2, upsample2], name='fuse_scores2')
-    
+
     upsample3 = Conv2DTranspose(filters=num_classes, kernel_size=3,
                         strides=2, activation=None, padding='valid',
                         kernel_initializer='glorot_uniform', use_bias=False,
@@ -182,7 +182,7 @@ def fcn_model(input_shape, num_classes, weights=None):
                         strides=1, activation=activation, padding='valid',
                         kernel_initializer='glorot_uniform', use_bias=True,
                         name='predictions')(crop3)
-    
+
     model = Model(inputs=data, outputs=predictions)
     if weights is not None:
         model.load_weights(weights)
@@ -195,5 +195,3 @@ def fcn_model(input_shape, num_classes, weights=None):
 
 if __name__ == '__main__':
     model = fcn_model((100, 100, 1), 2, weights=None)
-
-
