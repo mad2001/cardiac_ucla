@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # A Fully Convolutional Neural Network for Cardiac Segmentation
 
 A Keras re-implementation of the original Caffe FCN model in the arXiv paper [A Fully Convolutional Neural Network for Cardiac Segmentation in Short-Axis MRI
@@ -77,3 +78,6 @@ $ bash create_submission_rvsc.sh <gpu_id>
 ```
 
 **Note**: The LVSC and RVSC submission files must be submitted to the respective LVSC and RVSC challenge organizers for the official results evaluation. The Sunnybrook submission files can be evaluated using the MATLAB code provided as part of the data download.
+=======
+# cardiac
+>>>>>>> db3da67a44a153ed13bc5b798a8609f947f156f0
